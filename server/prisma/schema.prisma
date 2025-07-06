@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid()) @map("user_id")
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  username  String   @unique @map("username")
+  email     String   @unique @map("email_address")
+  password  String   @map("password")
+  avartar   String?  @map("avartar_img")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  blogs Blog[]
+
+  @@map("user")
+}
+
+model Blog {
+  id            String   @id @default(uuid()) @map("blog_id")
+  title         String   @map("title")
+  synopsis      String   @map("blog_synops")
+  content       String   @map("content")
+  featuredImage String   @map("featured_img")
+  isDeleted     Boolean  @default(false) @map("is_deleted")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+
+  @@map("blog")
+}
