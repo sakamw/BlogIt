@@ -1,0 +1,34 @@
+# GET  http://localhost:3500
+
+# POST http://localhost:3500/auth/register
+# content-type: application/json
+
+# {
+#   "firstName": "Francis",
+#   "lastName": "Kimani",
+#   "username": "@kimaniFrancis",
+#   "email": "kimtechnos@gmail.com",
+#   "password": "@kimaniFrancis"
+# }
+
+// Logging in a User
+POST  http://localhost:3500/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "@kimaniFrancis",
+  "password": "@kimaniFrancis"
+}
+
+# POST  http://localhost:3500/auth/logout
+# Content-Type: application/json
+
+# {
+#   "identifier": "@kimaniFrancis",
+#   "password": "@kimaniFrancis"
+# }
+
+# DELETE https://task-api-ts-production.up.railway.app/tasks/92b32406-d727-4741-9e9e-463032cb2698
+
+# GET https://task-api-ts-production.up.railway.app/tasks/b2165308-8dc8-40af-95dd-c7a34e2fb2f3
+
