@@ -9,7 +9,6 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { firstName, lastName, email, username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-
     await client.user.create({
       data: {
         firstName,
@@ -19,7 +18,6 @@ export const register = async (req: Request, res: Response) => {
         password: hashedPassword,
       },
     });
-
     res.status(201).json({ message: "User created successfully." });
   } catch (e) {
     console.error(e);
@@ -58,7 +56,7 @@ export const login = async (req: Request, res: Response) => {
 
     const {
       password: userPass,
-      avartar,
+      avatar,
       createdAt,
       updatedAt,
       ...userDetails
@@ -72,5 +70,6 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const logout = async (_req: Request, res: Response) => {
+  res.clearCookie("authToken");
   res.json({ message: "Logged out successfully" });
 };
