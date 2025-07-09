@@ -1,7 +1,13 @@
-import React from "react";
+import Header from "./pages/Header";
+import LandingPage from "./pages/LandingPage";
 
-const App: React.FC = () => {
-  return <div></div>;
+const App = () => {
+  return (
+    <>
+      <Header />
+      <LandingPage />
+    </>
+  );
 };
 
 export default App;
