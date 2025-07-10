@@ -19,9 +19,14 @@ export const register = async (req: Request, res: Response) => {
       },
     });
     res.status(201).json({ message: "User created successfully." });
-  } catch (e) {
+  } catch (e: any) {
+    if (e.code === "P2002") {
+      res.status(400).json({ message: "Email or username already in use." });
+      return;
+    }
+    const message = e.message || "Something went wrong.";
     console.error(e);
-    res.status(500).json({ message: "Something went wrong." });
+    res.status(500).json({ message });
   }
 };
 

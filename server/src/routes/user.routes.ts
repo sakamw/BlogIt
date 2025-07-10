@@ -9,20 +9,22 @@ import {
 import { authenticateJWT } from "../middlewares/userMiddleware";
 import { verifyNewPassStrength } from "../middlewares/newPassStrengthMiddleware";
 import multer from "multer";
-import path from "path";
 
 const router = Router();
 
-const storage = multer.diskStorage({
-  destination: function (_req, _file, cb) {
-    cb(null, path.join(__dirname, "../../uploads"));
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
   },
-  filename: function (_req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed!"));
+    }
   },
 });
-const upload = multer({ storage });
 
 router.get("/current", getCurrentUser);
 router.get("/blogs", authenticateJWT, getUserBlogs);

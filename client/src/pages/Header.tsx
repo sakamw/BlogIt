@@ -7,14 +7,17 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const theme = useTheme();
   const responsive = useMediaQuery(theme.breakpoints.down("sm"));
+  const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <AppBar
-      position="static"
+      position="fixed"
       elevation={0}
       sx={{
         background: "#fff",
@@ -34,6 +37,11 @@ const Header = () => {
             src="opt-logo.png"
             alt="BlogIt Logo"
             style={{ height: 44, marginRight: 6, cursor: "pointer" }}
+            onClick={() => {
+              if (location.pathname !== "/") {
+                navigate("/");
+              }
+            }}
           />
           <Typography
             variant="h5"
@@ -46,6 +54,8 @@ const Header = () => {
         <Box>
           {responsive ? (
             <Button
+              component={Link}
+              to="/signup"
               variant="contained"
               sx={{
                 background: "#388d80",
@@ -58,11 +68,13 @@ const Header = () => {
                 "&:hover": { background: "#2e7267" },
               }}
             >
-              SIGN IN
+              Get Started
             </Button>
           ) : (
             <>
               <Button
+                component={Link}
+                to="/login"
                 color="inherit"
                 variant="outlined"
                 sx={{
@@ -77,9 +89,11 @@ const Header = () => {
                   "&:hover": { background: "#e6f4f1", borderColor: "#388d80" },
                 }}
               >
-                Sign in
+                Login
               </Button>
               <Button
+                component={Link}
+                to="/signup"
                 variant="contained"
                 sx={{
                   background: "#388d80",

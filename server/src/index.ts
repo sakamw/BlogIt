@@ -5,7 +5,6 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import blogRoutes from "./routes/blogs.routes";
-import path from "path";
 
 const app: Express = express();
 
@@ -14,7 +13,8 @@ dotenv.config();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://localhost:5173/",
+    origin: "http://localhost:5173",
+    credentials: true,
     methods: ["POST", "GET", "PUT", "PATCH", "DELETE"],
   })
 );
@@ -27,8 +27,6 @@ app.get("/", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/blogs", blogRoutes);
-
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 const port = process.env.PORT || 3500;
 app.listen(port, () => console.log(`Server running on port ${port}`));
