@@ -1,17 +1,27 @@
-import { Box, Typography, Button, Stack } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Stack,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 
 const LandingPage = () => {
+  const theme = useTheme();
+  const responsive = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "center",
         px: { xs: 2, md: 10 },
-        py: { xs: 6, md: 10 },
-        minHeight: { md: "70vh" },
-        background: "linear-gradient(90deg, #fff 60%, #e6f4f1 100%)",
+        py: { xs: 4, md: 10 },
+        minHeight: "70vh",
+        background: { md: "linear-gradient(90deg, #fff 60%, #e6f4f1 100%)" },
       }}
     >
       <Stack
@@ -67,27 +77,29 @@ const LandingPage = () => {
           Get Started
         </Button>
       </Stack>
-      <Box
-        sx={{
-          mt: { xs: 6, md: 0 },
-          ml: { md: 8 },
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <img
-          src="/heros.webp"
-          alt="Blogging Hero"
-          style={{
-            maxWidth: 420,
-            width: "100%",
-            borderRadius: 24,
-            boxShadow: "0 .8rem 3.2rem rgba(56, 141, 128, 0.10)",
-            background: "#e6f4f1",
+
+      {!responsive && (
+        <Box
+          sx={{
+            ml: { md: 8 },
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
-        />
-      </Box>
+        >
+          <img
+            src="/hero.webp"
+            alt="Blogging Hero"
+            style={{
+              maxWidth: 420,
+              width: "100%",
+              borderRadius: 24,
+              boxShadow: "0 .8rem 3.2rem rgba(56, 141, 128, 0.10)",
+              background: "#e6f4f1",
+            }}
+          />
+        </Box>
+      )}
     </Box>
   );
 };

@@ -1,6 +1,17 @@
-import { Box, Typography, Button, AppBar, Toolbar } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  AppBar,
+  Toolbar,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 
 const Header = () => {
+  const theme = useTheme();
+  const responsive = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <AppBar
       position="static"
@@ -11,7 +22,7 @@ const Header = () => {
         boxShadow: "0 .2rem .8rem rgba(56, 141, 128, 0.06)",
         height: 80,
         justifyContent: "center",
-        px: 6,
+        px: { xs: 2, sm: 4, md: 6 },
       }}
     >
       <Toolbar
@@ -21,7 +32,7 @@ const Header = () => {
         <Box display="flex" alignItems="center">
           <img
             src="opt-logo.png"
-            alt="Blog-It Logo"
+            alt="BlogIt Logo"
             style={{ height: 44, marginRight: 6, cursor: "pointer" }}
           />
           <Typography
@@ -33,38 +44,58 @@ const Header = () => {
           </Typography>
         </Box>
         <Box>
-          <Button
-            color="inherit"
-            variant="outlined"
-            sx={{
-              borderColor: "#388d80",
-              color: "#388d80",
-              mr: 2,
-              px: 3,
-              fontWeight: 600,
-              borderRadius: 2,
-              textTransform: "none",
-              boxShadow: "none",
-              "&:hover": { background: "#e6f4f1", borderColor: "#388d80" },
-            }}
-          >
-            Login
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              background: "#388d80",
-              color: "#fff",
-              px: 3,
-              fontWeight: 600,
-              borderRadius: 2,
-              textTransform: "none",
-              boxShadow: "none",
-              "&:hover": { background: "#2e7267" },
-            }}
-          >
-            Register
-          </Button>
+          {responsive ? (
+            <Button
+              variant="contained"
+              sx={{
+                background: "#388d80",
+                color: "#fff",
+                px: 3,
+                fontWeight: 600,
+                borderRadius: 2,
+                textTransform: "none",
+                boxShadow: "none",
+                "&:hover": { background: "#2e7267" },
+              }}
+            >
+              SIGN IN
+            </Button>
+          ) : (
+            <>
+              <Button
+                color="inherit"
+                variant="outlined"
+                sx={{
+                  borderColor: "#388d80",
+                  color: "#388d80",
+                  mr: 2,
+                  px: 3,
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  textTransform: "none",
+                  boxShadow: "none",
+                  "&:hover": { background: "#e6f4f1", borderColor: "#388d80" },
+                }}
+              >
+                Sign in
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  background: "#388d80",
+                  color: "#fff",
+                  px: 3,
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  textTransform: "none",
+                  boxShadow: "none",
+                  "&:hover": { background: "#2e7267" },
+                }}
+              >
+                Register
+              </Button>
+            </>
+          )}
         </Box>
       </Toolbar>
     </AppBar>
