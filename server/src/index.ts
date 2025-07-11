@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import path from "path";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import blogRoutes from "./routes/blogs.routes";
@@ -19,6 +20,9 @@ app.use(
   })
 );
 app.use(cookieParser());
+
+// Serve uploads directory statically
+app.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
 
 app.get("/", (_req, res) => {
   res.send("<h1>Welcome to BlogIt</h1>");

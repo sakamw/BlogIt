@@ -28,7 +28,11 @@ export const getAllBlogs = async (_req: Request, res: Response) => {
 
 export const createBlog = async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
-  const { featuredImage, title, synopsis, content } = req.body;
+  const { title, synopsis, content } = req.body;
+  // Use uploaded file if present
+  const featuredImage = req.file
+    ? `/uploads/${req.file.filename}`
+    : req.body.featuredImage;
   if (!featuredImage || !title || !synopsis || !content) {
     res.status(400).json({ message: "All fields are required." });
     return;
@@ -82,7 +86,11 @@ export const getBlogById = async (req: Request, res: Response) => {
 export const updateBlog = async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
   const { blogId } = req.params;
-  const { featuredImage, title, synopsis, content } = req.body;
+  const { title, synopsis, content } = req.body;
+  // Use uploaded file if present
+  const featuredImage = req.file
+    ? `/uploads/${req.file.filename}`
+    : req.body.featuredImage;
   try {
     const blog = await prisma.blog.findUnique({
       where: { id: Number(blogId) },

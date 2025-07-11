@@ -7,6 +7,7 @@ import {
   Stack,
   Snackbar,
   Alert,
+  useTheme,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
@@ -33,6 +34,7 @@ const Signup = () => {
   const [success, setSuccess] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const { isPending, mutate } = useMutation({
     mutationKey: ["register-user"],
@@ -105,20 +107,26 @@ const Signup = () => {
         display="flex"
         alignItems="center"
         justifyContent="center"
-        bgcolor="#fafbfc"
+        bgcolor={theme.palette.background.default}
       >
         <Box
           component="form"
           onSubmit={handleSubmit}
           sx={{
-            background: "#fff",
+            background: theme.palette.background.paper,
             p: 4,
             borderRadius: 3,
             boxShadow: "0 .2rem 1.6rem rgba(0,0,0,0.08)",
             width: 425,
           }}
         >
-          <Typography variant="h4" fontWeight={700} mb={3} textAlign="center">
+          <Typography
+            variant="h4"
+            fontWeight={700}
+            mb={3}
+            textAlign="center"
+            color={theme.palette.text.primary}
+          >
             Create your BlogIt account
           </Typography>
           <Stack spacing={2}>
@@ -214,24 +222,29 @@ const Signup = () => {
               loading={isPending}
               fullWidth
               sx={{
-                background: "#1a8917",
+                background: theme.palette.primary.main,
                 fontWeight: 600,
                 fontSize: 16,
                 borderRadius: 2,
                 py: 1.5,
                 boxShadow: "none",
-                "&:hover": { background: "#166d13" },
+                "&:hover": { background: theme.palette.primary.dark },
               }}
             >
               Sign Up
             </Button>
-            <Typography textAlign="center" fontSize={14} mt={1}>
+            <Typography
+              textAlign="center"
+              fontSize={14}
+              mt={1}
+              color={theme.palette.text.secondary}
+            >
               Already have an account?{" "}
               <Button
                 component={Link}
                 to="/login"
                 sx={{
-                  color: "#1a8917",
+                  color: theme.palette.primary.main,
                   textTransform: "none",
                   p: 0,
                   minWidth: 0,
@@ -249,8 +262,8 @@ const Signup = () => {
         onClose={() => setOpenSnackbar(false)}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert severity="success" sx={{ width: "100%" }}>
-          {success}
+        <Alert severity={error ? "error" : "success"} sx={{ width: "100%" }}>
+          {error || success}
         </Alert>
       </Snackbar>
     </>

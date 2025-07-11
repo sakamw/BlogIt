@@ -7,11 +7,13 @@ import {
   Stack,
   IconButton,
   InputAdornment,
+  useTheme,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
+import useUser from "../../store/useStore";
 
 const Login = () => {
   const [identifier, setIdentifier] = useState("");
@@ -19,12 +21,14 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const setUser = useUser((state) => state.setUser);
+  const theme = useTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     try {
-      await axios.post(
+      const res = await axios.post(
         "http://localhost:3500/api/auth/login",
         {
           identifier,
@@ -32,7 +36,8 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-      navigate("/");
+      setUser(res.data);
+      navigate("/blogs");
     } catch (err: unknown) {
       if (
         err &&
@@ -64,20 +69,26 @@ const Login = () => {
       display="flex"
       alignItems="center"
       justifyContent="center"
-      bgcolor="#fafbfc"
+      bgcolor={theme.palette.background.default}
     >
       <Box
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          background: "#fff",
+          background: theme.palette.background.paper,
           p: 4,
           borderRadius: 3,
           boxShadow: "0 .2rem 1.6rem rgba(0,0,0,0.08)",
           width: 340,
         }}
       >
-        <Typography variant="h4" fontWeight={700} mb={3} textAlign="center">
+        <Typography
+          variant="h4"
+          fontWeight={700}
+          mb={3}
+          textAlign="center"
+          color={theme.palette.text.primary}
+        >
           Sign in to BlogIt
         </Typography>
         <Stack spacing={2}>
@@ -116,24 +127,29 @@ const Login = () => {
             variant="contained"
             fullWidth
             sx={{
-              background: "#1a8917",
+              background: theme.palette.primary.main,
               fontWeight: 600,
               fontSize: 16,
               borderRadius: 2,
               py: 1.5,
               boxShadow: "none",
-              "&:hover": { background: "#166d13" },
+              "&:hover": { background: theme.palette.primary.dark },
             }}
           >
             Sign In
           </Button>
-          <Typography textAlign="center" fontSize={14} mt={1}>
+          <Typography
+            textAlign="center"
+            fontSize={14}
+            mt={1}
+            color={theme.palette.text.secondary}
+          >
             Don&apos;t have an account?{" "}
             <Button
               component={Link}
               to="/signup"
               sx={{
-                color: "#1a8917",
+                color: theme.palette.primary.main,
                 textTransform: "none",
                 p: 0,
                 minWidth: 0,

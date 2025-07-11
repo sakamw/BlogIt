@@ -18,7 +18,9 @@ const LandingPage = () => {
         position: "relative",
         overflow: "hidden",
         minHeight: "100vh",
-        background: { md: "linear-gradient(90deg, #fff 60%, #e6f4f1 100%)" },
+        background: {
+          md: `linear-gradient(90deg, ${theme.palette.background.default} 60%, ${theme.palette.background.paper} 100%)`,
+        },
       }}
     >
       <Box
@@ -46,20 +48,20 @@ const LandingPage = () => {
             variant="h2"
             sx={{
               fontWeight: 800,
-              color: "#222",
+              color: theme.palette.text.primary,
               fontSize: { xs: "2.2rem", md: "3.2rem" },
               lineHeight: 1.1,
             }}
           >
             Welcome to{" "}
-            <Box component="span" sx={{ color: "#388d80" }}>
+            <Box component="span" sx={{ color: theme.palette.primary.main }}>
               BlogIt
             </Box>
           </Typography>
           <Typography
             variant="h5"
             sx={{
-              color: "#555",
+              color: theme.palette.text.secondary,
               fontWeight: 400,
               fontSize: { xs: "1.1rem", md: "1.5rem" },
             }}
@@ -74,8 +76,8 @@ const LandingPage = () => {
             variant="contained"
             size="large"
             sx={{
-              background: "#388d80",
-              color: "#fff",
+              background: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
               px: 4,
               py: 1.5,
               fontWeight: 600,
@@ -83,7 +85,7 @@ const LandingPage = () => {
               textTransform: "none",
               fontSize: "1.1rem",
               boxShadow: "none",
-              "&:hover": { background: "#2e7267" },
+              "&:hover": { background: theme.palette.primary.dark },
             }}
           >
             Get Started
