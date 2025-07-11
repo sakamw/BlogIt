@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { User, Blog } from "../../src/types/blog";
+import type { User, Blog } from "../types/types";
 
 interface AuthState {
   user: User | null;
@@ -44,7 +44,7 @@ type StoreState = AuthState & BlogState & AuthActions & BlogActions;
 
 const useStore = create<StoreState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
       token: null,
       isAuthenticated: false,

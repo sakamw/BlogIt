@@ -5,7 +5,12 @@ import Header from "./components/common/Header";
 import LandingPage from "./pages/LandingPage";
 import Signup from "./pages/auth/Signup";
 import Login from "./pages/auth/Login";
-import EditBlog from "./pages/blogs/EditBlog";
+import EditBlog from "./pages/EditBlog";
+import BlogsPage from "./pages/blogs/BlogsPage";
+import CreateBlog from "./pages/blogs/CreateBlog";
+import BlogDetails from "./pages/blogs/BlogDetails";
+import ProfilePage from "./pages/profile/ProfilePage";
+import NotFound from "./pages/NotFound";
 
 const client = new QueryClient();
 
@@ -46,7 +51,12 @@ const App = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/blogs" element={<BlogsPage />} />
+            <Route path="/blogs/create" element={<CreateBlog />} />
+            <Route path="/blogs/:blogId" element={<BlogDetails />} />
             <Route path="/blogs/:blogId/edit" element={<EditBlog />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
       </QueryClientProvider>
