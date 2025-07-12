@@ -121,7 +121,10 @@ const ProfilePage = () => {
       try {
         await deactivateUser();
         logoutUser();
-        window.location.href = "/auth/login";
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("zustand-persist-BlogIt");
+        window.location.href = "/";
+        window.location.reload();
       } catch {
         alert("Failed to deactivate account.");
       }
