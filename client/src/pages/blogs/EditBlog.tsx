@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import axiosInstance from "../../api/axios";
+import { uploadImageToCloudinary } from "../../utils/uploads";
 import {
   Box,
   TextField,
@@ -40,11 +41,7 @@ const EditBlog = () => {
       try {
         const res = await axiosInstance.get(`/blogs/${blogId}`);
         setForm(res.data);
-        setPreview(
-          res.data.featuredImage
-            ? `http://localhost:3500${res.data.featuredImage}`
-            : null
-        );
+        setPreview(res.data.featuredImage || null);
       } catch {
         setError("Blog not found");
       } finally {
@@ -66,7 +63,7 @@ const EditBlog = () => {
     if (file) {
       setPreview(URL.createObjectURL(file));
     } else if (form.featuredImage) {
-      setPreview(`http://localhost:3500${form.featuredImage}`);
+      setPreview(form.featuredImage);
     } else {
       setPreview(null);
     }
@@ -78,19 +75,23 @@ const EditBlog = () => {
     setSuccess("");
     setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("title", form.title || "");
-      formData.append("synopsis", form.synopsis || "");
-      formData.append("content", form.content || "");
+      let imageUrl = form.featuredImage || "";
+
       if (imageFile) {
-        formData.append("featuredImage", imageFile);
+        imageUrl = await uploadImageToCloudinary(imageFile);
       }
-      await axiosInstance.patch(`/blogs/${blogId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+
+      await axiosInstance.patch(`/blogs/${blogId}`, {
+        title: form.title || "",
+        synopsis: form.synopsis || "",
+        content: form.content || "",
+        featuredImage: imageUrl,
       });
+
       setSuccess("Blog updated successfully!");
       setTimeout(() => navigate(`/blogs/${blogId}`), 1200);
-    } catch {
+    } catch (error) {
+      console.error("Update error:", error);
       setError("Failed to update blog");
     } finally {
       setLoading(false);

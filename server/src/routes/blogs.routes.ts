@@ -12,7 +12,6 @@ import { authenticateJWT } from "../middlewares/userMiddleware";
 
 const router = Router();
 
-// Multer setup for featured image uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "../../uploads"));
@@ -26,13 +25,8 @@ const upload = multer({ storage });
 
 router.get("/", getAllBlogs);
 router.get("/:blogId", getBlogById);
-router.post("/", authenticateJWT, upload.single("featuredImage"), createBlog);
-router.patch(
-  "/:blogId",
-  authenticateJWT,
-  upload.single("featuredImage"),
-  updateBlog
-);
+router.post("/", authenticateJWT, createBlog);
+router.patch("/:blogId", authenticateJWT, updateBlog);
 router.delete("/:blogId", authenticateJWT, deleteBlog);
 
 export default router;

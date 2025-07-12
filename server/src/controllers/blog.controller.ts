@@ -46,12 +46,12 @@ export const getAllBlogs = async (req: Request, res: Response) => {
 
 export const createBlog = async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
-  const { title, synopsis, content } = req.body;
-  const featuredImage = req.file
-    ? `/uploads/${req.file.filename}`
-    : req.body.featuredImage;
-  if (!featuredImage || !title || !synopsis || !content) {
-    res.status(400).json({ message: "All fields are required." });
+  const { title, synopsis, content, featuredImage } = req.body;
+
+  if (!title || !synopsis || !content) {
+    res
+      .status(400)
+      .json({ message: "Title, synopsis, and content are required." });
     return;
   }
   if (!userId) {
@@ -61,7 +61,7 @@ export const createBlog = async (req: AuthRequest, res: Response) => {
   try {
     const blog = await prisma.blog.create({
       data: {
-        featuredImage,
+        featuredImage: featuredImage || "",
         title,
         synopsis,
         content,
@@ -70,6 +70,7 @@ export const createBlog = async (req: AuthRequest, res: Response) => {
     });
     res.status(201).json(blog);
   } catch (err) {
+    console.error("Create blog error:", err);
     res.status(500).json({ message: "Server error", error: err });
   }
 };
@@ -103,10 +104,8 @@ export const getBlogById = async (req: Request, res: Response) => {
 export const updateBlog = async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
   const { blogId } = req.params;
-  const { title, synopsis, content } = req.body;
-  const featuredImage = req.file
-    ? `/uploads/${req.file.filename}`
-    : req.body.featuredImage;
+  const { title, synopsis, content, featuredImage } = req.body;
+
   try {
     const blog = await prisma.blog.findUnique({
       where: { id: Number(blogId) },
@@ -119,17 +118,19 @@ export const updateBlog = async (req: AuthRequest, res: Response) => {
       res.status(403).json({ message: "Unauthorized." });
       return;
     }
+
     const updated = await prisma.blog.update({
       where: { id: Number(blogId) },
       data: {
-        featuredImage: featuredImage ?? blog.featuredImage,
-        title: title ?? blog.title,
-        synopsis: synopsis ?? blog.synopsis,
-        content: content ?? blog.content,
+        featuredImage: featuredImage || blog.featuredImage,
+        title: title || blog.title,
+        synopsis: synopsis || blog.synopsis,
+        content: content || blog.content,
       },
     });
     res.json(updated);
   } catch (err) {
+    console.error("Update blog error:", err);
     res.status(500).json({ message: "Server error", error: err });
   }
 };
