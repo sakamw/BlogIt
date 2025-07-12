@@ -11,6 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 interface Blog {
   id: number;
@@ -38,7 +39,8 @@ const EditBlog = () => {
     const fetchBlog = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3500/api/blogs/${blogId}`
+          `http://localhost:3500/api/blogs/${blogId}`,
+          { withCredentials: true }
         );
         setForm(res.data);
         setPreview(
@@ -112,6 +114,15 @@ const EditBlog = () => {
       borderRadius={4}
       boxShadow="0 4px 24px rgba(0,0,0,0.10)"
     >
+      <Box mb={2}>
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate(-1)}
+        >
+          Back
+        </Button>
+      </Box>
       <Typography
         variant="h4"
         fontWeight={700}

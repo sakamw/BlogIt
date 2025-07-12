@@ -5,6 +5,7 @@ import {
   updateUserPassword,
   getUserBlogs,
   uploadUserAvatar,
+  updateUserAvatarUrl,
 } from "../controllers/user.controller";
 import { authenticateJWT } from "../middlewares/userMiddleware";
 import { verifyNewPassStrength } from "../middlewares/newPassStrengthMiddleware";
@@ -26,7 +27,7 @@ const upload = multer({
   },
 });
 
-router.get("/current", getCurrentUser);
+router.get("/current", authenticateJWT, getCurrentUser);
 router.get("/blogs", authenticateJWT, getUserBlogs);
 router.patch("/", authenticateJWT, updateUserInfo);
 router.patch(
@@ -41,5 +42,6 @@ router.patch(
   upload.single("avatar"),
   uploadUserAvatar
 );
+router.patch("/avatar-url", authenticateJWT, updateUserAvatarUrl);
 
 export default router;

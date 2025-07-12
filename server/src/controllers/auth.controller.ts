@@ -48,6 +48,11 @@ export const login = async (req: Request, res: Response) => {
       },
     });
 
+    console.log("Login - found user:", user ? "yes" : "no");
+    if (user) {
+      console.log("Login - user id:", user.id);
+    }
+
     if (!user) {
       res.status(400).json({ message: "Invalid credentials." });
       return;
@@ -59,15 +64,23 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    const {
-      password: userPass,
-      avatar,
-      createdAt,
-      updatedAt,
-      ...userDetails
-    } = user;
+    const { password: userPassword, ...userDetails } = user;
+    console.log(
+      "Login - JWT_SECRET:",
+      process.env.JWT_SECRET ? "set" : "missing"
+    );
     const token = jwt.sign(userDetails, process.env.JWT_SECRET!);
-    res.cookie("authToken", token).json(userDetails);
+    console.log("Login - userDetails:", userDetails);
+    console.log("Login - token created");
+    res
+      .cookie("authToken", token, {
+        httpOnly: true,
+        secure: false, // Set to true in production with HTTPS
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        path: "/",
+      })
+      .json(userDetails);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error during login." });

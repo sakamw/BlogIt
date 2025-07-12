@@ -14,20 +14,19 @@ cloudinary.v2.config({
 });
 
 export const getCurrentUser = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ): Promise<void> => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader)
-      return void res.status(401).json({ message: "No token provided." });
-    const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    if (typeof decoded !== "object" || !decoded || !("id" in decoded)) {
-      return void res.status(401).json({ message: "Invalid token." });
+    console.log("getCurrentUser - req.user:", req.user);
+    const userId = req.user?.id;
+    console.log("getCurrentUser - userId:", userId);
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized." });
+      return;
     }
     const user = await client.user.findUnique({
-      where: { id: Number((decoded as any).id) },
+      where: { id: Number(userId) },
       select: {
         id: true,
         firstName: true,
@@ -240,5 +239,37 @@ export const uploadUserAvatar = async (req: AuthRequest, res: Response) => {
   } catch (e) {
     console.error("Avatar upload error:", e);
     res.status(500).json({ message: "Failed to upload profile picture." });
+  }
+};
+
+export const updateUserAvatarUrl = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized." });
+      return;
+    }
+    const { avatar } = req.body;
+    if (!avatar) {
+      res.status(400).json({ message: "No avatar URL provided." });
+      return;
+    }
+    const updatedUser = await client.user.update({
+      where: { id: Number(userId) },
+      data: { avatar },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        username: true,
+        email: true,
+        avatar: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    res.json(updatedUser);
+  } catch (e) {
+    res.status(500).json({ message: "Failed to update avatar." });
   }
 };

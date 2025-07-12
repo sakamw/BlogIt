@@ -12,8 +12,8 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import axios from "axios";
-import useUser from "../../store/useStore";
+import { useAuth } from "../../store/useStore";
+import axiosInstance from "../../api/axios";
 
 const Login = () => {
   const [identifier, setIdentifier] = useState("");
@@ -21,21 +21,23 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const setUser = useUser((state) => state.setUser);
+  const { setUser } = useAuth();
   const theme = useTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     try {
-      const res = await axios.post(
-        "http://localhost:3500/api/auth/login",
+      console.log("Frontend - attempting login");
+      const res = await axiosInstance.post(
+        "/auth/login",
         {
           identifier,
           password,
         },
         { withCredentials: true }
       );
+      console.log("Frontend - login response:", res.data);
       setUser(res.data);
       navigate("/blogs");
     } catch (err: unknown) {

@@ -26,3 +26,41 @@ export const createBlog = async (data: CreateBlogRequest): Promise<Blog> => {
   });
   return res.data;
 };
+
+export const updateUserAvatar = async (avatarUrl: string) => {
+  const res = await axios.patch(
+    `${API_BASE}/users/avatar-url`,
+    { avatar: avatarUrl },
+    { withCredentials: true }
+  );
+  return res.data;
+};
+
+export const updateUserInfo = async (data: {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+}) => {
+  const res = await axios.patch(`${API_BASE}/users/`, data, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const updateUserPassword = async (data: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  const res = await axios.patch(`${API_BASE}/users/password`, data, {
+    withCredentials: true,
+  });
+  return res.data;
+};
+
+export const deleteBlog = async (blogId: number) => {
+  const res = await axios.delete(`${API_BASE}/blogs/${blogId}`, {
+    withCredentials: true,
+  });
+  return res.data;
+};

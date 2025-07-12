@@ -9,7 +9,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { Blog } from "../../types/types";
+import type { Blog } from "../../types/types";
 
 interface BlogCardProps {
   blog: Blog;

@@ -1,187 +1,205 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
-  Typography,
   TextField,
   Button,
-  Container,
-  Paper,
-  Alert,
+  Typography,
+  Stack,
   useTheme,
+  CircularProgress,
+  Input,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import { createBlog } from "../../utils/api";
-import { useBlogs } from "../../store/useStore";
-import type { CreateBlogRequest } from "../../types/types";
-import type { AxiosError } from "axios";
+import PublishIcon from "@mui/icons-material/Publish";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { uploadImageToCloudinary } from "../../utils/uploads";
+import axiosInstance from "../../api/axios";
+
+const DRAFT_KEY = "blogit-draft";
 
 const CreateBlog = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { addBlog } = useBlogs();
-
-  const [formData, setFormData] = useState({
-    title: "",
-    synopsis: "",
-    content: "",
-    featuredImage: "",
-  });
-
+  const [title, setTitle] = useState("");
+  const [synopsis, setSynopsis] = useState("");
+  const [content, setContent] = useState("");
+  const [featuredImage, setFeaturedImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const createBlogMutation = useMutation({
-    mutationFn: (data: CreateBlogRequest) => createBlog(data),
-    onSuccess: (newBlog) => {
-      addBlog(newBlog);
-      navigate("/blogs");
-    },
-    onError: (error: unknown) => {
-      if (error && typeof error === "object" && "isAxiosError" in error) {
-        const axiosError = error as AxiosError<{ message?: string }>;
-        setError(axiosError.response?.data?.message || "Failed to create blog");
-      } else {
-        setError("Failed to create blog");
+  useEffect(() => {
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (saved) {
+      try {
+        const draft = JSON.parse(saved);
+        setTitle(draft.title || "");
+        setSynopsis(draft.synopsis || "");
+        setContent(draft.content || "");
+      } catch (e) {
+        console.error(e);
       }
-    },
-  });
+    }
+  }, []);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFeaturedImage(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
-    if (!formData.title || !formData.synopsis || !formData.content) {
-      setError("Please fill in all required fields");
-      return;
+    try {
+      let imageUrl = "";
+      if (featuredImage) {
+        imageUrl = await uploadImageToCloudinary(featuredImage);
+      }
+
+      const response = await axiosInstance.post("/blogs", {
+        title,
+        synopsis,
+        content,
+        featuredImage: imageUrl,
+      });
+
+      localStorage.removeItem(DRAFT_KEY);
+      navigate(`/blogs/${response.data.id}`);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to create blog");
+    } finally {
+      setLoading(false);
     }
-
-    createBlogMutation.mutate(formData);
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleBack = () => {
+    if (title || synopsis || content || featuredImage) {
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ title, synopsis, content })
+      );
+    }
+    navigate("/blogs/drafts");
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Paper
-        elevation={0}
-        sx={{
-          p: 4,
-          borderRadius: 3,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-        }}
-      >
-        <Typography
-          variant="h4"
-          component="h1"
-          fontWeight={700}
-          color={theme.palette.text.primary}
-          mb={3}
-          textAlign="center"
+    <Box
+      maxWidth={900}
+      mx="auto"
+      mt={6}
+      bgcolor={theme.palette.background.paper}
+      p={4}
+      borderRadius={4}
+      boxShadow="0 4px 24px rgba(0,0,0,0.10)"
+    >
+      <Box mb={2}>
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          onClick={handleBack}
         >
-          Create New Blog
-        </Typography>
+          Back
+        </Button>
+      </Box>
+      <Typography
+        variant="h4"
+        fontWeight={700}
+        mb={3}
+        color={theme.palette.text.primary}
+      >
+        Create New Blog
+      </Typography>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
+      <form onSubmit={handleSubmit}>
+        <Stack spacing={3}>
+          {error && (
+            <Typography color="error" textAlign="center">
+              {error}
+            </Typography>
+          )}
 
-        <Box component="form" onSubmit={handleSubmit}>
-          <TextField
-            label="Featured Image URL"
-            name="featuredImage"
-            value={formData.featuredImage}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            placeholder="https://example.com/image.jpg"
-            helperText="Enter a URL for your blog's featured image"
-          />
+          <Box>
+            <Input
+              type="file"
+              inputProps={{ accept: "image/*" }}
+              onChange={handleImageChange}
+              sx={{ display: "none" }}
+              id="featured-image-upload"
+            />
+            <label htmlFor="featured-image-upload">
+              <Button variant="outlined" component="span" sx={{ mb: 2 }}>
+                Upload Featured Image
+              </Button>
+            </label>
+            {preview && (
+              <Box mt={2}>
+                <img
+                  src={preview}
+                  alt="Preview"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: 300,
+                    borderRadius: 8,
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
 
           <TextField
             label="Title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             fullWidth
-            margin="normal"
             required
-            placeholder="Enter your blog title"
           />
 
           <TextField
             label="Synopsis"
-            name="synopsis"
-            value={formData.synopsis}
-            onChange={handleChange}
+            value={synopsis}
+            onChange={(e) => setSynopsis(e.target.value)}
             fullWidth
-            margin="normal"
             required
             multiline
             rows={3}
-            placeholder="Write a brief synopsis of your blog"
-            helperText="This will be displayed on the blog card"
           />
 
           <TextField
-            label="Content"
-            name="content"
-            value={formData.content}
-            onChange={handleChange}
+            label="Content (Markdown supported)"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
             fullWidth
-            margin="normal"
             required
             multiline
-            rows={12}
-            placeholder="Write your blog content here using Markdown..."
-            helperText="You can use Markdown syntax for formatting"
+            rows={10}
           />
 
-          <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
+          <Box display="flex" justifyContent="flex-end">
             <Button
               type="submit"
               variant="contained"
-              size="large"
-              disabled={createBlogMutation.isPending}
+              startIcon={
+                loading ? <CircularProgress size={20} /> : <PublishIcon />
+              }
+              disabled={loading}
               sx={{
-                flex: 1,
+                width: 200,
                 py: 1.5,
                 fontWeight: 600,
-                textTransform: "none",
-                borderRadius: 2,
               }}
             >
-              {createBlogMutation.isPending ? "Creating..." : "Create Blog"}
-            </Button>
-
-            <Button
-              type="button"
-              variant="outlined"
-              size="large"
-              onClick={() => navigate("/blogs")}
-              sx={{
-                flex: 1,
-                py: 1.5,
-                fontWeight: 600,
-                textTransform: "none",
-                borderRadius: 2,
-              }}
-            >
-              Cancel
+              Publish Blog
             </Button>
           </Box>
-        </Box>
-      </Paper>
-    </Container>
+        </Stack>
+      </form>
+    </Box>
   );
 };
 

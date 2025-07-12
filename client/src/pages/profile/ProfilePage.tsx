@@ -7,14 +7,13 @@ import {
   TextField,
   Paper,
   Container,
-  Divider,
   Alert,
 } from "@mui/material";
-import { useAuth, useBlogs } from "../../store/useStore";
+import { useAuth } from "../../store/useStore";
+import { updateUserInfo, updateUserPassword } from "../../utils/api";
 
 const ProfilePage = () => {
-  const { user } = useAuth();
-  const { userBlogs } = useBlogs();
+  const { user, setUser } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({
     firstName: user?.firstName || "",
@@ -22,8 +21,14 @@ const ProfilePage = () => {
     username: user?.username || "",
     email: user?.email || "",
   });
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+  });
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     setForm({
@@ -38,10 +43,68 @@ const ProfilePage = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    // TODO: Implement update user info API call
-    setSuccess("Profile updated (not yet implemented)");
-    setEditMode(false);
+  const handleSave = async () => {
+    setSuccess("");
+    setError("");
+    try {
+      const updated = await updateUserInfo(form);
+      setUser(updated);
+      setSuccess("Profile updated successfully!");
+      setEditMode(false);
+    } catch (err: unknown) {
+      if (
+        err &&
+        typeof err === "object" &&
+        "response" in err &&
+        err.response &&
+        typeof err.response === "object" &&
+        "data" in err.response &&
+        err.response.data &&
+        typeof err.response.data === "object" &&
+        "message" in err.response.data
+      ) {
+        setError(
+          (err.response.data as { message?: string }).message ||
+            "Failed to update profile."
+        );
+      } else {
+        setError("Failed to update profile.");
+      }
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordSuccess("");
+    setPasswordError("");
+    try {
+      await updateUserPassword(passwordForm);
+      setPasswordSuccess("Password updated successfully!");
+      setPasswordForm({ currentPassword: "", newPassword: "" });
+    } catch (err: unknown) {
+      if (
+        err &&
+        typeof err === "object" &&
+        "response" in err &&
+        err.response &&
+        typeof err.response === "object" &&
+        "data" in err.response &&
+        err.response.data &&
+        typeof err.response.data === "object" &&
+        "message" in err.response.data
+      ) {
+        setPasswordError(
+          (err.response.data as { message?: string }).message ||
+            "Failed to update password."
+        );
+      } else {
+        setPasswordError("Failed to update password.");
+      }
+    }
   };
 
   return (
@@ -113,64 +176,44 @@ const ProfilePage = () => {
         {success && <Alert severity="success">{success}</Alert>}
         {error && <Alert severity="error">{error}</Alert>}
       </Paper>
-      <Paper sx={{ p: 4, borderRadius: 3, mb: 4 }}>
-        <Typography variant="h6" fontWeight={700} gutterBottom>
-          My Blogs
-        </Typography>
-        {userBlogs.length === 0 ? (
-          <Typography color="text.secondary">
-            You have not created any blogs yet.
-          </Typography>
-        ) : (
-          userBlogs.map((blog) => (
-            <Box key={blog.id} mb={2}>
-              <Typography variant="subtitle1" fontWeight={600}>
-                {blog.title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {blog.synopsis}
-              </Typography>
-              <Button
-                size="small"
-                variant="outlined"
-                sx={{ mr: 1, mt: 1 }}
-                href={`/blogs/${blog.id}/edit`}
-              >
-                Edit
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                color="error"
-                sx={{ mt: 1 }}
-              >
-                Delete
-              </Button>
-              <Divider sx={{ my: 2 }} />
-            </Box>
-          ))
-        )}
-      </Paper>
       <Paper sx={{ p: 4, borderRadius: 3 }}>
         <Typography variant="h6" fontWeight={700} gutterBottom>
           Change Password
         </Typography>
-        <Box component="form">
+        <Box component="form" onSubmit={handlePasswordSubmit}>
           <TextField
             label="Current Password"
+            name="currentPassword"
             type="password"
+            value={passwordForm.currentPassword}
+            onChange={handlePasswordChange}
             fullWidth
             margin="normal"
+            required
           />
           <TextField
             label="New Password"
+            name="newPassword"
             type="password"
+            value={passwordForm.newPassword}
+            onChange={handlePasswordChange}
             fullWidth
             margin="normal"
+            required
           />
-          <Button variant="contained" sx={{ mt: 2 }}>
+          <Button variant="contained" type="submit" sx={{ mt: 2 }}>
             Update Password
           </Button>
+          {passwordSuccess && (
+            <Alert severity="success" sx={{ mt: 2 }}>
+              {passwordSuccess}
+            </Alert>
+          )}
+          {passwordError && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {passwordError}
+            </Alert>
+          )}
         </Box>
       </Paper>
     </Container>
