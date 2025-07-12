@@ -54,6 +54,7 @@ const Login = () => {
           localStorage.removeItem("authToken");
           logoutUser();
           navigate("/");
+          window.location.reload();
         }
       } else {
         setFormError("Login failed");
