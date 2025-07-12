@@ -14,14 +14,13 @@ dotenv.config();
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://blog-it-sable.vercel.app/",
     credentials: true,
     methods: ["POST", "GET", "PUT", "PATCH", "DELETE"],
   })
 );
 app.use(cookieParser());
 
-// Serve uploads directory statically
 app.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
 
 app.get("/", (_req, res) => {
