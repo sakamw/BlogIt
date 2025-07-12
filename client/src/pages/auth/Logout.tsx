@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../../store/useStore";
 import { Box, CircularProgress, Typography } from "@mui/material";
+import axiosInstance from "../../api/axios";
 
 const Logout = () => {
   const navigate = useNavigate();
@@ -11,14 +11,9 @@ const Logout = () => {
   useEffect(() => {
     const performLogout = async () => {
       try {
-        // Call backend logout endpoint
-        await axios.post(
-          "http://localhost:3500/api/auth/logout",
-          {},
-          {
-            withCredentials: true,
-          }
-        );
+        await axiosInstance.post("/auth/logout", {
+          withCredentials: true,
+        });
       } catch (error) {
         console.error("Logout error:", error);
       } finally {

@@ -4,10 +4,28 @@ import { AuthRequest } from "../middlewares/userMiddleware";
 
 const prisma = new PrismaClient();
 
-export const getAllBlogs = async (_req: Request, res: Response) => {
+export const getAllBlogs = async (req: Request, res: Response) => {
   try {
+    const search = req.query.search as string | undefined;
+    let where: any = { isDeleted: false };
+    if (search) {
+      if (!isNaN(Number(search))) {
+        where = {
+          ...where,
+          OR: [
+            { id: Number(search) },
+            { title: { contains: search, mode: "insensitive" } },
+          ],
+        };
+      } else {
+        where = {
+          ...where,
+          title: { contains: search, mode: "insensitive" },
+        };
+      }
+    }
     const blogs = await prisma.blog.findMany({
-      where: { isDeleted: false },
+      where,
       include: {
         author: {
           select: {

@@ -14,33 +14,27 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useAuth } from "../../store/useStore";
 import axiosInstance from "../../api/axios";
+import { useMutation } from "@tanstack/react-query";
 
 const Login = () => {
+  const { setUser } = useAuth();
+  const navigate = useNavigate();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const { setUser } = useAuth();
   const theme = useTheme();
+  const [formError, setFormError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    try {
-      console.log("Frontend - attempting login");
-      const res = await axiosInstance.post(
-        "/auth/login",
-        {
-          identifier,
-          password,
-        },
-        { withCredentials: true }
-      );
-      console.log("Frontend - login response:", res.data);
-      setUser(res.data);
-      navigate("/blogs");
-    } catch (err: unknown) {
+  const { isPending, mutate } = useMutation({
+    mutationKey: ["login-user"],
+    mutationFn: async (loginDetails: {
+      identifier: string;
+      password: string;
+    }) => {
+      const response = await axiosInstance.post("/auth/login", loginDetails);
+      return response.data;
+    },
+    onError: (err: unknown) => {
       if (
         err &&
         typeof err === "object" &&
@@ -52,17 +46,27 @@ const Login = () => {
         typeof err.response.data === "object" &&
         "message" in err.response.data
       ) {
-        setError(
+        setFormError(
           (err.response.data as { message?: string }).message || "Login failed"
         );
       } else {
-        setError("Login failed");
+        setFormError("Login failed");
       }
-    }
-  };
+    },
+    onSuccess: (data) => {
+      setUser(data);
+      navigate("/blogs");
+    },
+  });
 
   const handleTogglePassword = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError("");
+    mutate({ identifier, password });
   };
 
   return (
@@ -94,9 +98,9 @@ const Login = () => {
           Sign in to BlogIt
         </Typography>
         <Stack spacing={2}>
-          {error && (
+          {formError && (
             <Typography color="error" fontSize={14} textAlign="center">
-              {error}
+              {formError}
             </Typography>
           )}
           <TextField
@@ -128,6 +132,7 @@ const Login = () => {
             type="submit"
             variant="contained"
             fullWidth
+            disabled={isPending}
             sx={{
               background: theme.palette.primary.main,
               fontWeight: 600,
@@ -138,7 +143,7 @@ const Login = () => {
               "&:hover": { background: theme.palette.primary.dark },
             }}
           >
-            Sign In
+            {isPending ? "Signing In..." : "Sign In"}
           </Button>
           <Typography
             textAlign="center"

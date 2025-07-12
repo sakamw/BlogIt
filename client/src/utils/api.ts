@@ -4,8 +4,11 @@ import type { CreateBlogRequest } from "../types/types";
 
 const API_BASE = "http://localhost:3500/api";
 
-export const fetchBlogs = async (): Promise<Blog[]> => {
-  const res = await axios.get(`${API_BASE}/blogs`, { withCredentials: true });
+export const fetchBlogs = async (search?: string): Promise<Blog[]> => {
+  const url = search
+    ? `${API_BASE}/blogs?search=${encodeURIComponent(search)}`
+    : `${API_BASE}/blogs`;
+  const res = await axios.get(url, { withCredentials: true });
   return res.data;
 };
 

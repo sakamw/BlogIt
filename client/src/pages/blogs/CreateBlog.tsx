@@ -14,6 +14,7 @@ import PublishIcon from "@mui/icons-material/Publish";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { uploadImageToCloudinary } from "../../utils/uploads";
 import axiosInstance from "../../api/axios";
+import ReactMarkdown from "react-markdown";
 
 const DRAFT_KEY = "blogit-draft";
 
@@ -199,6 +200,26 @@ const CreateBlog = () => {
           </Box>
         </Stack>
       </form>
+      <Box mt={6}>
+        <Typography
+          variant="h5"
+          fontWeight={600}
+          mb={2}
+          color={theme.palette.text.primary}
+        >
+          Preview
+        </Typography>
+        <Box
+          p={3}
+          bgcolor={theme.palette.background.default}
+          borderRadius={2}
+          minHeight={120}
+        >
+          <ReactMarkdown>
+            {content || "Nothing to preview yet..."}
+          </ReactMarkdown>
+        </Box>
+      </Box>
     </Box>
   );
 };

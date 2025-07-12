@@ -3,13 +3,11 @@ import {
   Toolbar,
   Box,
   IconButton,
-  InputBase,
   Avatar,
   useTheme,
+  Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useRef, useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -17,6 +15,8 @@ import Snackbar from "@mui/material/Snackbar";
 import { useAuth } from "../../store/useStore";
 import { uploadImageToCloudinary } from "../../utils/uploads";
 import { updateUserAvatar } from "../../utils/api";
+import SearchBar from "./SearchBar";
+import { useNavigate } from "react-router-dom";
 
 const HeaderLoggedIn = ({
   onSidebarToggle,
@@ -28,6 +28,7 @@ const HeaderLoggedIn = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const getInitials = (first?: string, last?: string) =>
     `${first?.[0] || ""}${last?.[0] || ""}`.toUpperCase();
@@ -73,6 +74,12 @@ const HeaderLoggedIn = ({
     }
   };
 
+  const handleSearch = (query: string) => {
+    if (query.trim()) {
+      navigate(`/blogs?search=${encodeURIComponent(query)}`);
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -93,7 +100,7 @@ const HeaderLoggedIn = ({
         disableGutters
         sx={{ minHeight: 56, width: "100%", justifyContent: "space-between" }}
       >
-        {/* Left: Hamburger + BlogIt Logo */}
+        {/* Left: Hamburger and BlogIt Logo */}
         <Box display="flex" alignItems="center" gap={1}>
           <IconButton
             onClick={onSidebarToggle}
@@ -104,38 +111,29 @@ const HeaderLoggedIn = ({
             <MenuIcon fontSize="large" />
           </IconButton>
           {blogItLogo}
+          <Typography
+            variant="h6"
+            fontWeight={500}
+            color={theme.palette.primary.main}
+            sx={{ ml: 2, display: { xs: "none", sm: "block" } }}
+          >
+            {user?.firstName
+              ? `Welcome back, ${user.firstName}!`
+              : "Welcome back!"}
+          </Typography>
         </Box>
+        {/* searchbar Centering */}
         <Box
           flex={1}
           display="flex"
           justifyContent="center"
           alignItems="center"
+          minWidth={0}
         >
-          <Box
-            sx={{
-              background: theme.palette.background.default,
-              borderRadius: 3,
-              px: 2,
-              py: 0.5,
-              width: { xs: "90vw", sm: 400, md: 500 },
-              maxWidth: 600,
-              display: "flex",
-              alignItems: "center",
-              boxShadow: "none",
-            }}
-          >
-            <SearchIcon sx={{ color: theme.palette.text.secondary, mr: 1 }} />
-            <InputBase
-              placeholder="Search posts"
-              sx={{ flex: 1, fontSize: 16, color: theme.palette.text.primary }}
-              inputProps={{ "aria-label": "search posts" }}
-            />
-            <InfoOutlinedIcon
-              sx={{ color: theme.palette.text.disabled, ml: 1 }}
-            />
-          </Box>
+          <SearchBar onSearch={handleSearch} />
         </Box>
-        <Box display="flex" alignItems="center" gap={1}>
+        {/* Avatar positioning */}
+        <Box display="flex" alignItems="center" gap={1} ml={1}>
           <IconButton onClick={handleAvatarClick}>
             {user.avatar ? (
               <Avatar

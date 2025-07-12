@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useAuth } from "../../store/useStore";
 import { updateUserInfo, updateUserPassword } from "../../utils/api";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const ProfilePage = () => {
   const { user, setUser } = useAuth();
@@ -107,8 +108,28 @@ const ProfilePage = () => {
     }
   };
 
+  const handleDeactivate = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to deactivate your account? This action cannot be undone."
+      )
+    ) {
+      alert("Account deactivation is not implemented yet.");
+      // Here you would call your API to deactivate the account
+    }
+  };
+
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
+      <Box mb={2}>
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => window.history.back()}
+        >
+          Back
+        </Button>
+      </Box>
       <Paper sx={{ p: 4, borderRadius: 3, mb: 4 }}>
         <Box display="flex" alignItems="center" gap={2} mb={2}>
           <Avatar sx={{ width: 64, height: 64 }}>
@@ -216,6 +237,23 @@ const ProfilePage = () => {
           )}
         </Box>
       </Paper>
+      <Box mt={4} display="flex" justifyContent="center">
+        <Button
+          variant="contained"
+          color="error"
+          sx={{
+            backgroundColor: "#d32f2f",
+            color: "#fff",
+            fontWeight: 700,
+            px: 4,
+            py: 1.5,
+            borderRadius: 2,
+          }}
+          onClick={handleDeactivate}
+        >
+          Deactivate Account
+        </Button>
+      </Box>
     </Container>
   );
 };
