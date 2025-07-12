@@ -27,6 +27,18 @@ app.get("/", (_req, res) => {
   res.send("<h1>Welcome to BlogIt</h1>");
 });
 
+app.get("/health", (_req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    env: {
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
+      nodeEnv: process.env.NODE_ENV,
+    },
+  });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/blogs", blogRoutes);
