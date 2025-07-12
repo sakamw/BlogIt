@@ -6,6 +6,7 @@ import path from "path";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import blogRoutes from "./routes/blogs.routes";
+import { authenticateJWT } from "./middlewares/userMiddleware";
 
 const app: Express = express();
 
@@ -25,6 +26,25 @@ app.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
 
 app.get("/", (_req, res) => {
   res.send("<h1>Welcome to BlogIt</h1>");
+});
+
+app.get("/health", (_req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    env: {
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
+      nodeEnv: process.env.NODE_ENV,
+    },
+  });
+});
+
+app.get("/test-auth", authenticateJWT, (req: any, res) => {
+  res.json({
+    message: "Auth working",
+    user: req.user,
+  });
 });
 
 app.use("/api/auth", authRoutes);

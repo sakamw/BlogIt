@@ -106,10 +106,20 @@ export const updateBlog = async (req: AuthRequest, res: Response) => {
   const { blogId } = req.params;
   const { title, synopsis, content, featuredImage } = req.body;
 
+  console.log("Update blog - userId:", userId);
+  console.log("Update blog - blogId:", blogId);
+  console.log("Update blog - body:", req.body);
+
   try {
     const blog = await prisma.blog.findUnique({
       where: { id: Number(blogId) },
     });
+
+    console.log("Update blog - found blog:", blog ? "yes" : "no");
+    if (blog) {
+      console.log("Update blog - blog authorId:", blog.authorId);
+    }
+
     if (!blog || blog.isDeleted) {
       res.status(404).json({ message: "Blog not found." });
       return;
@@ -119,15 +129,21 @@ export const updateBlog = async (req: AuthRequest, res: Response) => {
       return;
     }
 
+    const updateData = {
+      featuredImage: featuredImage || blog.featuredImage,
+      title: title || blog.title,
+      synopsis: synopsis || blog.synopsis,
+      content: content || blog.content,
+    };
+
+    console.log("Update blog - update data:", updateData);
+
     const updated = await prisma.blog.update({
       where: { id: Number(blogId) },
-      data: {
-        featuredImage: featuredImage || blog.featuredImage,
-        title: title || blog.title,
-        synopsis: synopsis || blog.synopsis,
-        content: content || blog.content,
-      },
+      data: updateData,
     });
+
+    console.log("Update blog - success:", updated.id);
     res.json(updated);
   } catch (err) {
     console.error("Update blog error:", err);

@@ -81,18 +81,41 @@ const EditBlog = () => {
         imageUrl = await uploadImageToCloudinary(imageFile);
       }
 
-      await axiosInstance.patch(`/blogs/${blogId}`, {
+      const updateData = {
         title: form.title || "",
         synopsis: form.synopsis || "",
         content: form.content || "",
         featuredImage: imageUrl,
-      });
+      };
 
+      console.log("Sending update data:", updateData);
+
+      const response = await axiosInstance.patch(
+        `/blogs/${blogId}`,
+        updateData
+      );
+
+      console.log("Update response:", response.data);
       setSuccess("Blog updated successfully!");
       setTimeout(() => navigate(`/blogs/${blogId}`), 1200);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Update error:", error);
-      setError("Failed to update blog");
+      if (
+        error &&
+        typeof error === "object" &&
+        "response" in error &&
+        error.response &&
+        typeof error.response === "object" &&
+        "data" in error.response
+      ) {
+        const errorData = error.response.data as { message?: string };
+        console.error("Error response:", errorData);
+        setError(
+          `Failed to update blog: ${errorData.message || "Unknown error"}`
+        );
+      } else {
+        setError("Failed to update blog");
+      }
     } finally {
       setLoading(false);
     }
