@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "prisma generate && tsc",
+    "prisma:generate": "prisma generate",
     "start:dev": "nodemon  src/index.ts",
     "start:prod": "node dist/index.js"
   },
