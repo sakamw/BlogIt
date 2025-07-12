@@ -11,9 +11,7 @@ const Logout = () => {
   useEffect(() => {
     const performLogout = async () => {
       try {
-        await axiosInstance.post("/auth/logout", {
-          withCredentials: true,
-        });
+        await axiosInstance.post("/auth/logout");
       } catch (error) {
         console.error("Logout error:", error);
       } finally {

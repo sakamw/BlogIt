@@ -8,37 +8,49 @@ import {
   CircularProgress,
   Avatar,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {
+  fetchTrashedBlogs,
+  restoreBlog,
+  permanentlyDeleteBlog,
+} from "../../utils/api";
 import type { Blog } from "../../types/types";
-import { softDeleteBlog } from "../../utils/api";
-import axiosInstance from "../../api/axios";
 
-const EditBlogs = () => {
+const TrashPage = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchBlogs = async () => {
+    const fetchData = async () => {
       setLoading(true);
       setError("");
       try {
-        const res = await axiosInstance.get("/users/blogs");
-        setBlogs(res.data);
+        const data = await fetchTrashedBlogs();
+        setBlogs(data);
       } catch {
-        setError("Failed to load blogs.");
+        setError("Failed to load trashed blogs.");
       } finally {
         setLoading(false);
       }
     };
-    fetchBlogs();
+    fetchData();
   }, []);
 
+  const handleRestore = async (blogId: number) => {
+    try {
+      await restoreBlog(blogId);
+      setBlogs((prev) => prev.filter((b) => b.id !== blogId));
+    } catch {
+      alert("Failed to restore blog.");
+    }
+  };
+
   const handleDelete = async (blogId: number) => {
-    if (window.confirm("Are you sure you want to move this blog to trash?")) {
+    if (
+      window.confirm("Permanently delete this blog? This cannot be undone.")
+    ) {
       try {
-        await softDeleteBlog(blogId);
+        await permanentlyDeleteBlog(blogId);
         setBlogs((prev) => prev.filter((b) => b.id !== blogId));
       } catch {
         alert("Failed to delete blog.");
@@ -49,16 +61,14 @@ const EditBlogs = () => {
   return (
     <Box maxWidth={900} mx="auto" mt={6}>
       <Typography variant="h4" fontWeight={700} mb={3}>
-        Edit Your Blogs
+        Trash
       </Typography>
       {loading ? (
         <CircularProgress />
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : blogs.length === 0 ? (
-        <Typography color="text.secondary">
-          You have not created any blogs yet.
-        </Typography>
+        <Typography color="text.secondary">No blogs in trash.</Typography>
       ) : (
         <Stack spacing={2}>
           {blogs.map((blog) => (
@@ -87,20 +97,22 @@ const EditBlogs = () => {
                   </Typography>
                 </Box>
               </Box>
-              <Button
-                variant="outlined"
-                onClick={() => navigate(`/blogs/${blog.id}/edit`)}
-                sx={{ mr: 1 }}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => handleDelete(blog.id)}
-              >
-                Delete
-              </Button>
+              <Box display="flex" gap={1}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => handleRestore(blog.id)}
+                >
+                  Restore
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => handleDelete(blog.id)}
+                >
+                  Delete Permanently
+                </Button>
+              </Box>
             </Paper>
           ))}
         </Stack>
@@ -109,4 +121,4 @@ const EditBlogs = () => {
   );
 };
 
-export default EditBlogs;
+export default TrashPage;

@@ -47,7 +47,6 @@ export const getAllBlogs = async (req: Request, res: Response) => {
 export const createBlog = async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
   const { title, synopsis, content } = req.body;
-  // Use uploaded file if present
   const featuredImage = req.file
     ? `/uploads/${req.file.filename}`
     : req.body.featuredImage;
@@ -105,7 +104,6 @@ export const updateBlog = async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
   const { blogId } = req.params;
   const { title, synopsis, content } = req.body;
-  // Use uploaded file if present
   const featuredImage = req.file
     ? `/uploads/${req.file.filename}`
     : req.body.featuredImage;

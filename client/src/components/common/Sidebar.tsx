@@ -179,6 +179,12 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
             </ListItemIcon>
             <ListItemText primary="Edit Blogs" />
           </ListItem>
+          <ListItem component={Link} to="/blogs/trash">
+            <ListItemIcon>
+              <DraftsIcon color="error" />
+            </ListItemIcon>
+            <ListItemText primary="Trash" />
+          </ListItem>
           <ListItem component={Link} to="/profile">
             <ListItemIcon>
               <PersonIcon color="primary" />

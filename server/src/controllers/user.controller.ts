@@ -273,3 +273,20 @@ export const updateUserAvatarUrl = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Failed to update avatar." });
   }
 };
+
+export const deactivateUser = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized." });
+      return;
+    }
+    await client.user.update({
+      where: { id: Number(userId) },
+      data: { isDeleted: true },
+    });
+    res.json({ message: "Account deactivated successfully." });
+  } catch (e) {
+    res.status(500).json({ message: "Failed to deactivate account." });
+  }
+};

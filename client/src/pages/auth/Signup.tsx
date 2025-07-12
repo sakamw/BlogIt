@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import axiosInstance from "../../api/axios";
 
 interface User {
   firstName: string;
@@ -40,11 +40,9 @@ const Signup = () => {
     mutationKey: ["register-user"],
     mutationFn: async (newUser: User) => {
       try {
-        const response = await axios.post(
-          "http://localhost:3500/api/auth/register",
-          newUser,
-          { withCredentials: true }
-        );
+        const response = await axiosInstance.post("/auth/register", newUser, {
+          withCredentials: true,
+        });
         return response.data;
       } catch (err: unknown) {
         if (

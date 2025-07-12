@@ -70,14 +70,12 @@ export const login = async (req: Request, res: Response) => {
       process.env.JWT_SECRET ? "set" : "missing"
     );
     const token = jwt.sign(userDetails, process.env.JWT_SECRET!);
-    console.log("Login - userDetails:", userDetails);
-    console.log("Login - token created");
     res
       .cookie("authToken", token, {
         httpOnly: true,
-        secure: false, // Set to true in production with HTTPS
+        secure: false,
         sameSite: "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
       })
       .json(userDetails);

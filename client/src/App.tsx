@@ -2,23 +2,24 @@ import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 import Header from "./components/common/Header";
-import Sidebar from "./components/common/Sidebar";
 import LandingPage from "./pages/LandingPage";
 import Signup from "./pages/auth/Signup";
 import Login from "./pages/auth/Login";
-import EditBlog from "./pages/blogs/EditBlog";
 import BlogsPage from "./pages/blogs/BlogsPage";
-import CreateBlog from "./pages/blogs/CreateBlog";
+import Sidebar from "./components/common/Sidebar";
 import BlogDetails from "./pages/blogs/BlogDetails";
+import CreateBlog from "./pages/blogs/CreateBlog";
+import EditBlog from "./pages/blogs/EditBlog";
+import EditBlogs from "./pages/blogs/EditBlogs";
 import ProfilePage from "./pages/profile/ProfilePage";
 import Logout from "./pages/auth/Logout";
 import NotFound from "./pages/NotFound";
 import { useAuth } from "./store/useStore";
-import axios from "axios";
-import ProtectedRoute from "./components/common/ProtectedRoute";
 import DraftsPage from "./pages/blogs/DraftsPage";
-import EditBlogs from "./pages/blogs/EditBlogs";
+import axiosInstance from "./api/axios";
+import TrashPage from "./pages/blogs/TrashPage";
 
 const client = new QueryClient();
 
@@ -57,7 +58,7 @@ const App = () => {
       try {
         console.log("Frontend - fetching current user");
         setLoading(true);
-        const res = await axios.get("http://localhost:3500/api/users/current", {
+        const res = await axiosInstance.get("/users/current", {
           withCredentials: true,
         });
         console.log("Frontend - current user response:", res.data);
@@ -129,6 +130,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <EditBlogs />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/blogs/trash"
+              element={
+                <ProtectedRoute>
+                  <TrashPage />
                 </ProtectedRoute>
               }
             />

@@ -17,6 +17,7 @@ model User {
   avatar   String?  @map("avatar_img")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  isDeleted Boolean  @default(false) @map("is_deleted")
 
   blogs Blog[]
 

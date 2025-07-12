@@ -10,11 +10,15 @@ import {
   Alert,
 } from "@mui/material";
 import { useAuth } from "../../store/useStore";
-import { updateUserInfo, updateUserPassword } from "../../utils/api";
+import {
+  updateUserInfo,
+  updateUserPassword,
+  deactivateUser,
+} from "../../utils/api";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const ProfilePage = () => {
-  const { user, setUser } = useAuth();
+  const { user, setUser, logoutUser } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({
     firstName: user?.firstName || "",
@@ -108,14 +112,19 @@ const ProfilePage = () => {
     }
   };
 
-  const handleDeactivate = () => {
+  const handleDeactivate = async () => {
     if (
       window.confirm(
         "Are you sure you want to deactivate your account? This action cannot be undone."
       )
     ) {
-      alert("Account deactivation is not implemented yet.");
-      // Here you would call your API to deactivate the account
+      try {
+        await deactivateUser();
+        logoutUser();
+        window.location.href = "/";
+      } catch {
+        alert("Failed to deactivate account.");
+      }
     }
   };
 

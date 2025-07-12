@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
-import axios from "axios";
+import axiosInstance from "../../api/axios";
 import {
   Box,
   TextField,
@@ -38,10 +38,7 @@ const EditBlog = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:3500/api/blogs/${blogId}`,
-          { withCredentials: true }
-        );
+        const res = await axiosInstance.get(`/blogs/${blogId}`);
         setForm(res.data);
         setPreview(
           res.data.featuredImage
@@ -88,8 +85,7 @@ const EditBlog = () => {
       if (imageFile) {
         formData.append("featuredImage", imageFile);
       }
-      await axios.patch(`http://localhost:3500/api/blogs/${blogId}`, formData, {
-        withCredentials: true,
+      await axiosInstance.patch(`/blogs/${blogId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setSuccess("Blog updated successfully!");
