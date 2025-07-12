@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { Multer } from "multer";
 
 export async function authenticateJWT(
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ) {
@@ -43,4 +44,6 @@ export async function authenticateJWT(
 
 export interface AuthRequest extends Request {
   user?: { id: number };
+  file?: Express.Multer.File;
+  files?: Express.Multer.File[];
 }
