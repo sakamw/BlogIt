@@ -9,20 +9,17 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import BlogCard from "../../components/blog/BlogCard";
 import { fetchBlogs } from "../../utils/api";
-import { useSearchParams } from "react-router-dom";
 
 const BlogsPage = () => {
   const theme = useTheme();
-  const [searchParams] = useSearchParams();
-  const search = searchParams.get("search") || undefined;
 
   const {
     data: blogs = [],
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["blogs", search],
-    queryFn: () => fetchBlogs(search),
+    queryKey: ["blogs"],
+    queryFn: fetchBlogs,
   });
 
   if (isLoading) {

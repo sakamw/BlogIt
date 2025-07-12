@@ -14,7 +14,7 @@ dotenv.config();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://blog-it-sable.vercel.app/",
+    origin: "https://blog-it-sable.vercel.app",
     credentials: true,
     methods: ["POST", "GET", "PUT", "PATCH", "DELETE"],
   })
