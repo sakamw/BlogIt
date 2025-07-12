@@ -83,12 +83,12 @@ export const login = async (req: Request, res: Response) => {
     res
       .cookie("authToken", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: true,
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: "/",
       })
-      .json(userDetails);
+      .json({ ...userDetails, token });
   } catch (error) {
     console.error("Login error details:", error);
     res.status(500).json({ message: "Server error during login." });
@@ -96,6 +96,11 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const logout = async (_req: Request, res: Response) => {
-  res.clearCookie("authToken");
+  res.clearCookie("authToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+  });
   res.json({ message: "Logged out successfully" });
 };

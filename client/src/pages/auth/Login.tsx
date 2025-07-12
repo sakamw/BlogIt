@@ -54,6 +54,9 @@ const Login = () => {
       }
     },
     onSuccess: (data) => {
+      if (data.token) {
+        localStorage.setItem("authToken", data.token);
+      }
       setUser(data);
       navigate("/blogs");
     },
