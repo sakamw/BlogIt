@@ -19,7 +19,7 @@ const BlogsPage = () => {
     error,
   } = useQuery({
     queryKey: ["blogs"],
-    queryFn: fetchBlogs,
+    queryFn: () => fetchBlogs(),
   });
 
   if (isLoading) {
