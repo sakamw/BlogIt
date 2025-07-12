@@ -74,9 +74,9 @@ const EditBlog = () => {
     setError("");
     setSuccess("");
     setLoading(true);
+
     try {
       let imageUrl = form.featuredImage || "";
-
       if (imageFile) {
         imageUrl = await uploadImageToCloudinary(imageFile);
       }
@@ -94,7 +94,6 @@ const EditBlog = () => {
         `/blogs/${blogId}`,
         updateData
       );
-
       console.log("Update response:", response.data);
       setSuccess("Blog updated successfully!");
       setTimeout(() => navigate(`/blogs/${blogId}`), 1200);
