@@ -121,7 +121,7 @@ const ProfilePage = () => {
       try {
         await deactivateUser();
         logoutUser();
-        window.location.href = "/";
+        window.location.href = "/auth/login";
       } catch {
         alert("Failed to deactivate account.");
       }
