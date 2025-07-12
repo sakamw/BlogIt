@@ -102,6 +102,13 @@ export const getBlogById = async (req: Request, res: Response) => {
 };
 
 export const updateBlog = async (req: AuthRequest, res: Response) => {
+  if (!req.body || typeof req.body !== "object") {
+    res.status(400).json({
+      message:
+        "Invalid or missing request body. Make sure you are sending JSON, not FormData.",
+    });
+    return;
+  }
   const userId = req.user?.id;
   const { blogId } = req.params;
   const { title, synopsis, content, featuredImage } = req.body;
