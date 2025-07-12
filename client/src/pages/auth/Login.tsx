@@ -17,7 +17,7 @@ import axiosInstance from "../../api/axios";
 import { useMutation } from "@tanstack/react-query";
 
 const Login = () => {
-  const { setUser } = useAuth();
+  const { setUser, logoutUser } = useAuth();
   const navigate = useNavigate();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -46,9 +46,15 @@ const Login = () => {
         typeof err.response.data === "object" &&
         "message" in err.response.data
       ) {
-        setFormError(
-          (err.response.data as { message?: string }).message || "Login failed"
-        );
+        const message =
+          (err.response.data as { message?: string }).message || "Login failed";
+        setFormError(message);
+
+        if (message === "This account has been deactivated.") {
+          localStorage.removeItem("authToken");
+          logoutUser();
+          navigate("/");
+        }
       } else {
         setFormError("Login failed");
       }
