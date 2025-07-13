@@ -15,7 +15,11 @@ dotenv.config();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://blog-it-sable.vercel.app", "http://localhost:5173"],
+    origin: [
+      "https://blog-it-sable.vercel.app",
+      "https://starlit-lollipop-772732.netlify.app",
+      "http://localhost:5173",
+    ],
     credentials: true,
     methods: ["POST", "GET", "PUT", "PATCH", "DELETE"],
   })
