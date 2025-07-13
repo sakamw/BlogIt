@@ -43,6 +43,9 @@ const theme = createTheme({
       primary: "#222",
       secondary: "#555",
     },
+    cardBackground: "#FAFAFA",
+    cardBorder: "#E0E0E0",
+    cardShadow: "0 .2rem .8rem rgba(0,0,0,0.05)",
   },
   shape: {
     borderRadius: 8,

@@ -32,7 +32,6 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    console.log("Login attempt - body:", req.body);
     const { identifier, password } = req.body;
 
     if (!identifier || !password) {
@@ -43,24 +42,17 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    console.log("Login - checking database connection...");
     const user = await client.user.findFirst({
       where: {
         OR: [{ email: identifier }, { username: identifier }],
       },
     });
 
-    console.log("Login - found user:", user ? "yes" : "no");
-    if (user) {
-      console.log("Login - user id:", user.id);
-    }
-
     if (!user) {
       res.status(400).json({ message: "Invalid credentials." });
       return;
     }
 
-    console.log("Login - comparing passwords...");
     const isPassMatch = await bcrypt.compare(password, user.password);
     if (!isPassMatch) {
       res.status(400).json({ message: "Invalid credentials." });
@@ -68,29 +60,15 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const { password: userPassword, ...userDetails } = user;
-    console.log(
-      "Login - JWT_SECRET:",
-      process.env.JWT_SECRET ? "set" : "missing"
-    );
 
     if (!process.env.JWT_SECRET) {
-      console.error("JWT_SECRET is not set!");
       res.status(500).json({ message: "Server configuration error." });
       return;
     }
 
     const token = jwt.sign(userDetails, process.env.JWT_SECRET);
-    res
-      .cookie("authToken", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        path: "/",
-      })
-      .json({ ...userDetails, token });
+    res.cookie("authToken", token).json({ ...userDetails, token });
   } catch (error) {
-    console.error("Login error details:", error);
     res.status(500).json({ message: "Server error during login." });
   }
 };

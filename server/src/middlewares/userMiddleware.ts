@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { Multer } from "multer";
 
 export async function authenticateJWT(
   req: AuthRequest,

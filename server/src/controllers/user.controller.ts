@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { AuthRequest } from "../middlewares/userMiddleware";
 import bcrypt from "bcryptjs";
@@ -8,8 +8,6 @@ const client = new PrismaClient();
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
-  api_key: process.env.CLOUDINARY_API_KEY!,
-  api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
 export const getCurrentUser = async (
@@ -17,9 +15,7 @@ export const getCurrentUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    console.log("getCurrentUser - req.user:", req.user);
     const userId = req.user?.id;
-    console.log("getCurrentUser - userId:", userId);
     if (!userId) {
       res.status(401).json({ message: "Unauthorized." });
       return;

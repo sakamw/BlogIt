@@ -24,7 +24,6 @@ const userStore: StateCreator<UserStore> = (set) => ({
   isLoading: true,
   setUser: (user: User) => set({ user, isLoading: false }),
   logoutUser: () => {
-    // Clear all authentication data
     localStorage.removeItem("authToken");
     localStorage.removeItem("zustand-persist-BlogIt");
     set({ user: null, isLoading: false });

@@ -104,8 +104,7 @@ export const getBlogById = async (req: Request, res: Response) => {
 export const updateBlog = async (req: AuthRequest, res: Response) => {
   if (!req.body || typeof req.body !== "object") {
     res.status(400).json({
-      message:
-        "Invalid or missing request body. Make sure you are sending JSON, not FormData.",
+      message: "Invalid or missing request body.",
     });
     return;
   }
@@ -113,24 +112,16 @@ export const updateBlog = async (req: AuthRequest, res: Response) => {
   const { blogId } = req.params;
   const { title, synopsis, content, featuredImage } = req.body;
 
-  console.log("Update blog - userId:", userId);
-  console.log("Update blog - blogId:", blogId);
-  console.log("Update blog - body:", req.body);
-
   try {
     const blog = await prisma.blog.findUnique({
       where: { id: Number(blogId) },
     });
 
-    console.log("Update blog - found blog:", blog ? "yes" : "no");
-    if (blog) {
-      console.log("Update blog - blog authorId:", blog.authorId);
-    }
-
     if (!blog || blog.isDeleted) {
       res.status(404).json({ message: "Blog not found." });
       return;
     }
+
     if (blog.authorId !== userId) {
       res.status(403).json({ message: "Unauthorized." });
       return;
@@ -143,14 +134,11 @@ export const updateBlog = async (req: AuthRequest, res: Response) => {
       content: content || blog.content,
     };
 
-    console.log("Update blog - update data:", updateData);
-
     const updated = await prisma.blog.update({
       where: { id: Number(blogId) },
       data: updateData,
     });
 
-    console.log("Update blog - success:", updated.id);
     res.json(updated);
   } catch (err) {
     console.error("Update blog error:", err);

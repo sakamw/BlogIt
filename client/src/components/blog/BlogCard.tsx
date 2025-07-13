@@ -41,14 +41,18 @@ const BlogCard: React.FC<BlogCardProps> = ({
   return (
     <Card
       sx={{
-        maxWidth: 400,
+        width: "100%",
         borderRadius: 3,
-        boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+        background: theme.palette.cardBackground,
+        border: `1px solid ${theme.palette.cardBorder}`,
+        boxShadow: theme.palette.cardShadow,
         transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
         "&:hover": {
-          transform: "translateY(-4px)",
-          boxShadow: "0 8px 30px rgba(0,0,0,0.15)",
+          transform: "translateY(-.4rem)",
+          boxShadow: theme.palette.cardShadow,
         },
+        p: { xs: 1, sm: 0 },
+        m: { xs: 0, sm: 0 },
       }}
     >
       <CardMedia

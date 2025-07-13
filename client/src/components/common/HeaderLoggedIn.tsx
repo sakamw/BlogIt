@@ -100,7 +100,6 @@ const HeaderLoggedIn = ({
         disableGutters
         sx={{ minHeight: 56, width: "100%", justifyContent: "space-between" }}
       >
-        {/* Left: Hamburger and BlogIt Logo */}
         <Box display="flex" alignItems="center" gap={1}>
           <IconButton
             onClick={onSidebarToggle}
@@ -118,11 +117,10 @@ const HeaderLoggedIn = ({
             sx={{ ml: 2, display: { xs: "none", sm: "block" } }}
           >
             {user?.firstName
-              ? `Welcome back, ${user.firstName}!`
+              ? `Welcome back, ${user.firstName}`
               : "Welcome back!"}
           </Typography>
         </Box>
-        {/* searchbar Centering */}
         <Box
           flex={1}
           display="flex"
@@ -132,7 +130,7 @@ const HeaderLoggedIn = ({
         >
           <SearchBar onSearch={handleSearch} />
         </Box>
-        {/* Avatar positioning */}
+        {/* Avatar */}
         <Box display="flex" alignItems="center" gap={1} ml={1}>
           <IconButton onClick={handleAvatarClick}>
             {user.avatar ? (

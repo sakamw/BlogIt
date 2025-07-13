@@ -1,5 +1,4 @@
-import type { Blog } from "../types/types";
-import type { CreateBlogRequest } from "../types/types";
+import type { Blog, CreateBlogRequest } from "../types/types";
 import axiosInstance from "../api/axios";
 
 export const fetchBlogs = async (search?: string): Promise<Blog[]> => {
