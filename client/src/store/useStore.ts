@@ -24,13 +24,20 @@ const userStore: StateCreator<UserStore> = (set) => ({
   isLoading: true,
   setUser: (user: User) => set({ user, isLoading: false }),
   logoutUser: () => {
-    set({ user: null, isLoading: false });
+    // Clear all authentication data
+    localStorage.removeItem("authToken");
     localStorage.removeItem("zustand-persist-BlogIt");
+    set({ user: null, isLoading: false });
   },
   setLoading: (loading: boolean) => set({ isLoading: loading }),
 });
 
-const useUser = create(persist(userStore, { name: "BlogIt" }));
+const useUser = create(
+  persist(userStore, {
+    name: "BlogIt",
+    partialize: (state) => ({ user: state.user }), // Only persist user data
+  })
+);
 
 export const useAuth = () => {
   const user = useUser((state) => state.user);

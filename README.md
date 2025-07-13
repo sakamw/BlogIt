@@ -1,1 +1,3 @@
-# BlogIt - Publishing Your Passion, Your Way
+# Blog-It
+
+A modern blogging platform built with React, TypeScript, and Node.js.

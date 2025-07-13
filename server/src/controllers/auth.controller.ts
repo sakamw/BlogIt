@@ -60,11 +60,6 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    if (user.isDeleted) {
-      res.status(403).json({ message: "This account has been deactivated." });
-      return;
-    }
-
     console.log("Login - comparing passwords...");
     const isPassMatch = await bcrypt.compare(password, user.password);
     if (!isPassMatch) {
