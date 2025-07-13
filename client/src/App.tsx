@@ -59,15 +59,13 @@ const App = () => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        console.log("Frontend - fetching current user");
         setLoading(true);
         const res = await axiosInstance.get("/users/current", {
           withCredentials: true,
         });
-        console.log("Frontend - current user response:", res.data);
         setUser(res.data);
       } catch (error) {
-        console.log("Frontend - current user error:", error);
+        console.error(error);
         logoutUser();
       }
     };
