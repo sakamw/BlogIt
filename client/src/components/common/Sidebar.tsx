@@ -78,6 +78,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
             color={theme.palette.primary.main}
             component={Link}
             to="/blogs"
+            onClick={onClose}
             sx={{ textDecoration: "none" }}
           >
             BlogIt
@@ -118,6 +119,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
           <ListItem
             component={Link}
             to="/blogs/create"
+            onClick={onClose}
             sx={{
               mb: 2,
               background: "#fff",
@@ -161,37 +163,37 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
               }}
             />
           </ListItem>
-          <ListItem component={Link} to="/blogs">
+          <ListItem component={Link} to="/blogs" onClick={onClose}>
             <ListItemIcon>
               <ArticleIcon color="primary" />
             </ListItemIcon>
             <ListItemText primary="Recent Blogs" />
           </ListItem>
-          <ListItem component={Link} to="/blogs/drafts">
+          <ListItem component={Link} to="/blogs/drafts" onClick={onClose}>
             <ListItemIcon>
               <DraftsIcon color="primary" />
             </ListItemIcon>
             <ListItemText primary="Drafts" />
           </ListItem>
-          <ListItem component={Link} to="/blogs/editblogs">
+          <ListItem component={Link} to="/blogs/editblogs" onClick={onClose}>
             <ListItemIcon>
               <ArticleIcon color="primary" />
             </ListItemIcon>
             <ListItemText primary="Edit Blogs" />
           </ListItem>
-          <ListItem component={Link} to="/blogs/trash">
+          <ListItem component={Link} to="/blogs/trash" onClick={onClose}>
             <ListItemIcon>
               <DraftsIcon color="error" />
             </ListItemIcon>
             <ListItemText primary="Trash" />
           </ListItem>
-          <ListItem component={Link} to="/profile">
+          <ListItem component={Link} to="/profile" onClick={onClose}>
             <ListItemIcon>
               <PersonIcon color="primary" />
             </ListItemIcon>
             <ListItemText primary="Profile" />
           </ListItem>
-          <ListItem component={Link} to="/logout">
+          <ListItem component={Link} to="/logout" onClick={onClose}>
             <ListItemIcon>
               <LogoutIcon color="primary" />
             </ListItemIcon>

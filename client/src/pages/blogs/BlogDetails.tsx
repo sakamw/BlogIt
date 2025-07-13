@@ -55,6 +55,9 @@ const BlogDetails = () => {
     );
   }
 
+  const getInitials = (first?: string, last?: string) =>
+    `${first?.[0] || ""}${last?.[0] || ""}`.toUpperCase();
+
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Box mb={3}>
@@ -79,10 +82,25 @@ const BlogDetails = () => {
           {blog.synopsis}
         </Typography>
         <Box display="flex" alignItems="center" gap={2} mb={2}>
-          <Avatar>
-            {blog.author.firstName[0]}
-            {blog.author.lastName[0]}
-          </Avatar>
+          {blog.author.avatar ? (
+            <Avatar
+              src={blog.author.avatar}
+              alt={`${blog.author.firstName} ${blog.author.lastName}`}
+              sx={{ width: 40, height: 40 }}
+            />
+          ) : (
+            <Avatar
+              sx={{
+                width: 40,
+                height: 40,
+                bgcolor: "primary.main",
+                fontWeight: 700,
+                fontSize: 16,
+              }}
+            >
+              {getInitials(blog.author.firstName, blog.author.lastName)}
+            </Avatar>
+          )}
           <Typography variant="body1">
             {blog.author.firstName} {blog.author.lastName}
           </Typography>
