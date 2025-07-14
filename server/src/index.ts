@@ -26,8 +26,6 @@ app.use(
 );
 app.use(cookieParser());
 
-app.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
-
 app.get("/", (_req, res) => {
   res.send("<h1>Welcome to BlogIt</h1>");
 });
