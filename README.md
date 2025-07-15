@@ -90,7 +90,7 @@ Server `.env` example:
 
 ```bash
 PORT=5000
-MONGODB_URI=...
+DATABASE_URL=...
 JWT_SECRET=supersecret
 ```
 
