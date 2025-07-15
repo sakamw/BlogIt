@@ -100,7 +100,7 @@ Server: `pnpm run start:dev`
 
 Frontend: `pnpm run dev`
 
-Access the app at <http://localhost:3500> (frontend) and server API at <http://localhost:5173/api>.
+Access the app at <http://localhost:5173> (frontend) and server API at <http://localhost:3500/api>.
 
 ## Usage
 
